@@ -1,6 +1,10 @@
 # the-web-
-IT'S JUST A WEBSITE THAT I'M MAKING 
+
+IT'S JUST A WEBSITE THAT I'M MAKING
 
 
 
-HERE IT IS THE WEBSITE https://arttog15-lab.github.io/the-web-/CLOUDY.HTML
+here it is the website \[here it is the website](https://arttog15-lab.github.io/the-web-/CLOUDY.HTML).
+
+
+
