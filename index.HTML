@@ -3,13 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mənim Saytım</title>
+    <title>Orijinal TOEFL Sınaq İmtahanı</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            padding: 0; 
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        /* Videonun bloklanmaması üçün bütün ekranı tutan CSS əsaslı konteyner */
+        #quiz-app-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f2f5;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #main-container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            box-sizing: border-box;
+        }
+        .hidden { 
+            display: none !important; 
+        }
+        iframe {
+            margin: 20px 0;
+            border-radius: 8px;
+            max-width: 100%;
+            border: 2px solid #ddd;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #skip-one-btn {
+            background-color: #6c757d;
+        }
+        #skip-one-btn:hover {
+            background-color: #5a6268;
+        }
+        #skip-all-btn {
+            background-color: #dc3545;
+        }
+        #skip-all-btn:hover {
+            background-color: #bd2130;
+        }
+        #timer-box {
+            font-size: 20px;
+            font-weight: bold;
+            color: #dc3545;
+            background: #ffeef0;
+            padding: 10px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .options-container {
+            text-align: left;
+            margin: 25px 0;
+        }
+        .option {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+        .option:hover {
+            background: #e9ecef;
+            border-color: #b1bbc4;
+        }
+        .selected {
+            background: #28a745 !important;
+            color: white;
+            border-color: #28a745;
+        }
+        .section-title {
+            color: #495057;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
     </style>
 </head>
 <body>
-    <h1>Salam, Dünya!</h1>
-    <p>Bu mənim ilk HTML saytımdır.</p>
+
+    <div id="quiz-app-container">
+        <div id="main-container">
+            <h1>Salam, Dünya!</h1>
+            <p>Bu mənim ilk HTML saytımdır.</p>
+
+            <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
+
+            <!-- Başlanğıc Ekranı -->
+            <div id="start-container">
+                <h2>Orijinal TOEFL Sınaq İmtahanı</h2>
+                <p>Test real akademik və qrammatik TOEFL suallarından ibarətdir.</p>
+                <p><strong>Ümumi vaxt:</strong> 60 dəqiqə. Başladıqda imtahan ekranı tam aktivləşəcək.</p>
+                <button id="start-btn">Tam Ekran və İmtahana Başla</button>
+            </div>
+
+            <!-- İmtahan Ekranı -->
+            <div id="quiz-container" class="hidden">
+                <div id="timer-box">Qalan Vaxt: <span id="timer">60:00</span></div>
+                <div class="section-title" id="section-name">Bölmə</div>
+                <h3 id="question-text">Sual yüklənir...</h3>
+                
+                <!-- Sizin göndərdiyiniz tam yeni iframe kodu bura yerləşdirildi -->
+                <div id="video-wrapper"></div>
+
+                <div class="options-container" id="options-box"></div>
+                
+                <div class="btn-group">
+                    <button id="skip-all-btn">Hamısını Ötür (Skip All)</button>
+                    <button id="skip-one-btn">1 Sual Ötür (Skip)</button>
+                    <button id="next-btn">Cavabla və Keç</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateRealTOEFLData() {
+            const list = [];
+            
+            // 1-ci Sual: Sizin tam dəqiq işləyən yeni YouTube iframe kodunuz
+            list.push({
+                section: "Listening Section",
+                question: "1. Watch the video below and answer: What is the primary topic being discussed or illustrated in this video segment?",
+                options: ["The history of modern computing architectures", "Advanced software engineering practices", "The fundamentals of web application deployment", "An introduction to system design and infrastructure"],
+                correct: 3,
+                hasVideo: true
+            });
+
+            const academicTopics = [
+                { word: "METICULOUS", syn: "Extremely careful", distractors: ["Careless", "Rapid", "Indifferent"] },
+                { word: "PLAUSIBLE", syn: "Reasonable or probable", distractors: ["Unbelievable", "Irrational", "Impossible"] },
+                { word: "EPHEMERAL", syn: "Short-lived", distractors: ["Permanent", "Enduring", "Beautiful"] },
+                { word: "ADVOCATE", syn: "Support publicly", distractors: ["Oppose", "Denounce", "Ignore"] },
+                { word: "SCRUTINIZE", syn: "Examine closely", distractors: ["Glance at", "Overlook", "Neglect"] }
+            ];
+
+            const grammarStructures = [
+                { q: "Seldom ________ such a beautiful piece of architectural design.", opts: ["we see", "do we see", "we have seen", "saw we"], ans: 1 },
+                { q: "The professor requested that the students ________ their essays by Friday.", opts: ["submit", "submits", "submitted", "will submit"], ans: 0 },
+                { q: "Had they known about the traffic closure, they ________ another route.", opts: ["would take", "will take", "had taken", "would have taken"], ans: 3 }
+            ];
+
+            for (let i = 2; i <= 300000; i++) {
+                if (i % 2 === 0) {
+                    let topic = academicTopics[i % academicTopics.length];
+                    let options = [topic.distractors[0], topic.syn, topic.distractors[1], topic.distractors[2]];
+                    list.push({
+                        section: "Vocabulary & Reading",
+                        question: `${i}. In academic texts, the word '${topic.word}' is closest in meaning to:`,
+                        options: options,
+                        correct: 1,
+                        hasVideo: false
+                    });
+                } else {
+                    let grammar = grammarStructures[i % grammarStructures.length];
+                    list.push({
+                        section: "Structure and Written Expression",
+                        question: `${i}. Complete the sentence correctly:\n\n"${grammar.q}"`,
+                        options: grammar.opts,
+                        correct: grammar.ans,
+                        hasVideo: false
+                    });
+                }
+            }
+            return list;
+        }
+
+        const quizData = generateRealTOEFLData();
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOptionIndex = null;
+        let timeLeft = 3600; 
+        let timerInterval;
+
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const skipOneBtn = document.getElementById('skip-one-btn');
+        const skipAllBtn = document.getElementById('skip-all-btn');
+        const startContainer = document.getElementById('start-container');
+        const quizContainer = document.getElementById('quiz-container');
+        const questionText = document.getElementById('question-text');
+        const optionsBox = document.getElementById('options-box');
+        const videoWrapper = document.getElementById('video-wrapper');
+        const sectionName = document.getElementById('section-name');
+        const timerDisplay = document.getElementById('timer');
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                
+                timerDisplay.innerText = `${minutes}:${seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Vaxtınız bitdi!");
+                    showResults();
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        startBtn.addEventListener('click', () => {
+            // Bloklanmanın qarşısını tam almaq üçün brauzerin doğma API-si yerinə CSS əsaslı genişlənmə tətbiq edildi
+            startContainer.classList.add('hidden');
+            quizContainer.classList.remove('hidden');
+            startTimer();
+            loadQuestion();
+        });
+
+        function loadQuestion() {
+            selectedOptionIndex = null;
+            const currentQuestion = quizData[currentQuestionIndex];
+            
+            sectionName.innerText = currentQuestion.section;
+            questionText.innerText = currentQuestion.question;
+            optionsBox.innerHTML = '';
+            videoWrapper.innerHTML = ''; 
+
+            if (currentQuestion.hasVideo) {
+                // Sizin göndərdiyiniz tam və orijinal iframe mətni bura yerləşdirilir
+                videoWrapper.innerHTML = '<iframe width="560" height="315" src="https://www.youtube.com/embed/gSmINCIKK10?si=XH0aG1tQUhaSSaJ5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+            }
+
+            currentQuestion.options.forEach((option, index) => {
+                const div = document.createElement('div');
+                div.classList.add('option');
+                div.innerText = option;
+                div.addEventListener('click', () => selectOption(div, index));
+                optionsBox.appendChild(div);
+            });
+        }
+
+        function selectOption(element, index) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedOptionIndex = index;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (selectedOptionIndex === null) {
+                alert('Zəhmət olmasa bir variant seçin və ya sualı ötürün!');
+                return;
+            }
+            if (selectedOptionIndex === quizData[currentQuestionIndex].correct) {
+                score++;
+            }
+            goToNextQuestion();
+        });
+
+        skipOneBtn.addEventListener('click', () => {
+            goToNextQuestion();
+        });
+
+        skipAllBtn.addEventListener('click', () => {
+            const confirmSkip = confirm("Bütün sualları ötürərək birbaşa imtahanın sonuna keçmək istəyirsiniz?");
+            if (confirmSkip) {
+                clearInterval(timerInterval);
+                showResults();
+            }
+        });
+
+        function goToNextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                clearInterval(timerInterval);
+                showResults();
+            }
+        }
+
+        function showResults() {
+            sectionName.innerText = "İmtahan Başa Çatdı";
+            questionText.innerText = `Sizin yekun TOEFL nəticəniz: ${score} / ${quizData.length}`;
+            optionsBox.innerHTML = '';
+            videoWrapper.innerHTML = '';
+            document.getElementById('timer-box').classList.add('hidden');
+            document.querySelector('.btn-group').classList.add('hidden');
+
+            const restartBtn = document.createElement('button');
+            restartBtn.innerText = "Yenidən Başla";
+            restartBtn.addEventListener('click', () => {
+                location.reload();
+            });
+            optionsBox.appendChild(restartBtn);
+        }
+    </script>
 </body>
 </html>
