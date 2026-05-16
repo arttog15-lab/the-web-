@@ -12,15 +12,16 @@
             margin: 0;
             background-color: #f0f2f5;
             color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-        /* Videonun bloklanmaması üçün bütün ekranı tutan CSS əsaslı konteyner */
         #quiz-app-container {
             width: 100%;
-            min-height: 100vh;
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f0f2f5;
             padding: 20px;
             box-sizing: border-box;
         }
@@ -115,6 +116,15 @@
             flex-wrap: wrap;
             gap: 5px;
         }
+        footer {
+            background-color: #ffffff;
+            color: #666;
+            padding: 15px 0;
+            font-size: 14px;
+            font-weight: 500;
+            border-top: 1px solid #e2e8f0;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -130,7 +140,7 @@
             <div id="start-container">
                 <h2>Orijinal TOEFL Sınaq İmtahanı</h2>
                 <p>Test real akademik və qrammatik TOEFL suallarından ibarətdir.</p>
-                <p><strong>Ümumi vaxt:</strong> 60 dəqiqə. Başladıqda imtahan ekranı tam aktivləşəcək.</p>
+                <p><strong>Ümumi vaxt:</strong> 60 dəqiqə.</p>
                 <button id="start-btn">Tam Ekran və İmtahana Başla</button>
             </div>
 
@@ -140,7 +150,6 @@
                 <div class="section-title" id="section-name">Bölmə</div>
                 <h3 id="question-text">Sual yüklənir...</h3>
                 
-                <!-- Sizin göndərdiyiniz tam yeni iframe kodu bura yerləşdirildi -->
                 <div id="video-wrapper"></div>
 
                 <div class="options-container" id="options-box"></div>
@@ -154,11 +163,14 @@
         </div>
     </div>
 
+    <footer>
+        Made by Ərtoğrul . Aliquliyev
+    </footer>
+
     <script>
         function generateRealTOEFLData() {
             const list = [];
             
-            // 1-ci Sual: Sizin tam dəqiq işləyən yeni YouTube iframe kodunuz
             list.push({
                 section: "Listening Section",
                 question: "1. Watch the video below and answer: What is the primary topic being discussed or illustrated in this video segment?",
@@ -184,7 +196,7 @@
             for (let i = 2; i <= 300000; i++) {
                 if (i % 2 === 0) {
                     let topic = academicTopics[i % academicTopics.length];
-                    let options = [topic.distractors[0], topic.syn, topic.distractors[1], topic.distractors[2]];
+                    let options = [topic.distractors, topic.syn, topic.distractors, topic.distractors];
                     list.push({
                         section: "Vocabulary & Reading",
                         question: `${i}. In academic texts, the word '${topic.word}' is closest in meaning to:`,
@@ -212,6 +224,42 @@
         let selectedOptionIndex = null;
         let timeLeft = 3600; 
         let timerInterval;
+
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/;SameSite=Strict";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function eraseCookie(name) {   
+            document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+
+        function saveProgress() {
+            setCookie("toefl_question_index", currentQuestionIndex, 7);
+            setCookie("toefl_score", score, 7);
+            setCookie("toefl_time_left", timeLeft, 7);
+            setCookie("toefl_in_progress", "true", 7);
+        }
+
+        function clearProgress() {
+            eraseCookie("toefl_question_index");
+            eraseCookie("toefl_score");
+            eraseCookie("toefl_time_left");
+            eraseCookie("toefl_in_progress");
+        }
 
         const startBtn = document.getElementById('start-btn');
         const nextBtn = document.getElementById('next-btn');
@@ -241,13 +289,34 @@
                     showResults();
                 }
                 timeLeft--;
+                setCookie("toefl_time_left", timeLeft, 7);
             }, 1000);
         }
 
+        window.addEventListener('DOMContentLoaded', () => {
+            const inProgress = getCookie("toefl_in_progress");
+            if (inProgress === "true") {
+                currentQuestionIndex = parseInt(getCookie("toefl_question_index")) || 0;
+                score = parseInt(getCookie("toefl_score")) || 0;
+                timeLeft = parseInt(getCookie("toefl_time_left")) || 3600;
+
+                if (currentQuestionIndex >= quizData.length) {
+                    startContainer.classList.add('hidden');
+                    quizContainer.classList.remove('hidden');
+                    showResults();
+                } else {
+                    startContainer.classList.add('hidden');
+                    quizContainer.classList.remove('hidden');
+                    startTimer();
+                    loadQuestion();
+                }
+            }
+        });
+
         startBtn.addEventListener('click', () => {
-            // Bloklanmanın qarşısını tam almaq üçün brauzerin doğma API-si yerinə CSS əsaslı genişlənmə tətbiq edildi
             startContainer.classList.add('hidden');
             quizContainer.classList.remove('hidden');
+            saveProgress();
             startTimer();
             loadQuestion();
         });
@@ -262,7 +331,7 @@
             videoWrapper.innerHTML = ''; 
 
             if (currentQuestion.hasVideo) {
-                // Sizin göndərdiyiniz tam və orijinal iframe mətni bura yerləşdirilir
+                // Sizin təqdim etdiyiniz dəqiq iFrame kodu buraya bərpa edildi
                 videoWrapper.innerHTML = '<iframe width="560" height="315" src="https://www.youtube.com/embed/gSmINCIKK10?si=XH0aG1tQUhaSSaJ5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
             }
 
@@ -300,6 +369,8 @@
         skipAllBtn.addEventListener('click', () => {
             const confirmSkip = confirm("Bütün sualları ötürərək birbaşa imtahanın sonuna keçmək istəyirsiniz?");
             if (confirmSkip) {
+                currentQuestionIndex = quizData.length; 
+                saveProgress();
                 clearInterval(timerInterval);
                 showResults();
             }
@@ -307,6 +378,8 @@
 
         function goToNextQuestion() {
             currentQuestionIndex++;
+            saveProgress(); 
+            
             if (currentQuestionIndex < quizData.length) {
                 loadQuestion();
             } else {
@@ -324,8 +397,9 @@
             document.querySelector('.btn-group').classList.add('hidden');
 
             const restartBtn = document.createElement('button');
-            restartBtn.innerText = "Yenidən Başla";
+            restartBtn.innerText = "Yenidən Başla (Yaddaşı Sıfırla)";
             restartBtn.addEventListener('click', () => {
+                clearProgress(); 
                 location.reload();
             });
             optionsBox.appendChild(restartBtn);
